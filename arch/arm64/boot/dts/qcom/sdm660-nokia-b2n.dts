@@ -69,11 +69,6 @@
 		#address-cells = <0x02>;
 		#size-cells = <0x02>;
 
-		modem_fw_region@8ac00000 {
-			reg = <0x00 0x8ac00000 0x00 0x7e00000>;
-			no-map;
-		};
-
 		buffer_mem: buffer_region@94a00000 {
 			reg = <0x00 0x94a00000 0x00 0x600000>;
 			no-map;		
