@@ -8,8 +8,6 @@
 #include "sdm660.dtsi"
 #include "pm660.dtsi"
 #include "pm660l.dtsi"
-#include <dt-bindings/input/input.h>
-#include <dt-bindings/input/gpio-keys.h>
 
 / {
 	chassis-type = "handset";
