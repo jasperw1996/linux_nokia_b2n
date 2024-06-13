@@ -9,6 +9,9 @@
 #include "pm660.dtsi"
 #include "pm660l.dtsi"
 
+/delete-node/ &buffer_mem;
+/delete-node/ &zap_shader_region;
+
 / {
 	chassis-type = "handset";
 	
@@ -66,37 +69,12 @@
 		#address-cells = <0x02>;
 		#size-cells = <0x02>;
 
-		wlan_msa_guard: wlan-msa-guard@85600000 {
-			reg = <0x0 0x85600000 0x0 0x100000>;
-			no-map;
-		};
-
-		wlan_msa_mem: wlan-msa-mem@85700000 {
-			reg = <0x0 0x85700000 0x0 0x100000>;
-			no-map;
-		};
-
-		removed_regions@85800000 {
-			reg = <0x00 0x85800000 0x00 0x3700000>;
-			no-map;
-		};
-
 		modem_fw_region@8ac00000 {
 			reg = <0x00 0x8ac00000 0x00 0x7e00000>;
 			no-map;
 		};
 
-		adsp_fw_region@92a00000 {
-			reg = <0x00 0x92a00000 0x00 0x1e00000>;
-			no-map;			
-		}
-
-		pil_mba_mem: mba@94800000 {
-			reg = <0x00 0x94800000 0x00 0x200000>;
-			no-map;			
-		}
-
-		cdsp_fw_mem: buffer_region@94a00000 {
+		buffer_mem: buffer_region@94a00000 {
 			reg = <0x00 0x94a00000 0x00 0x600000>;
 			no-map;		
 		}	
