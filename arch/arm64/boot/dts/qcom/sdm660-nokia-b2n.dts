@@ -251,11 +251,11 @@
 	
 	panel: panel@0 {
 		reg = <0>;
-		compatible = "mdss,nt36672-tianma";
+		compatible = "asus,nt36672-txd";
 
 		backlight = <&pm660l_wled>;
 
-		reset-gpios = <&tlmm 53 GPIO_ACTIVE_LOW>;
+		reset-gpios = <&tlmm 53 GPIO_ACTIVE_HIGH>;
 		disp-te-gpios = <&tlmm 59 GPIO_ACTIVE_HIGH>;
 
 		width-mm = <68>;
