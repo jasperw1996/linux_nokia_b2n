@@ -8,6 +8,8 @@
 #include "sdm660.dtsi"
 #include "pm660.dtsi"
 #include "pm660l.dtsi"
+#include <dt-bindings/input/input.h>
+#include <dt-bindings/input/gpio-keys.h>
 
 / {
 	chassis-type = "handset";
@@ -44,7 +46,7 @@
 
 		framebuffer0: framebuffer@9D400000 {
 			compatible = "simple-framebuffer";
-			reg = <0x0 0x9D400000 0x0 (2160 * 1920 * 4)>;
+			reg = <0x0 0x9D400000 0x0 (1080 * 2160 * 4)>;
 			width = <1080>;
 			height = <2160>;
 			stride = <(1080 * 4)>;
@@ -66,23 +68,60 @@
 		#address-cells = <0x02>;
 		#size-cells = <0x02>;
 
+		wlan_msa_guard: wlan-msa-guard@85600000 {
+			reg = <0x0 0x85600000 0x0 0x100000>;
+			no-map;
+		};
+
+		wlan_msa_mem: wlan-msa-mem@85700000 {
+			reg = <0x0 0x85700000 0x0 0x100000>;
+			no-map;
+		};
+
 		removed_regions@85800000 {
 			reg = <0x00 0x85800000 0x00 0x3700000>;
 			no-map;
 		};
 
-		adsp_region {
-			size = <0x00 0x800000>;
-			reusable;
-			alloc-ranges = <0x00 0x00 0x00 0xffffffff>;
-			alignment = <0x00 0x400000>;
-			phandle = <0x10d>;
-			linux,phandle = <0x10d>;
+		modem_fw_region@8ac00000 {
+			reg = <0x00 0x8ac00000 0x00 0x7e00000>;
+			no-map;
+		};
+
+		adsp_fw_region@92a00000 {
+			reg = <0x00 0x92a00000 0x00 0x1e00000>;
+			no-map;			
+		}
+
+		pil_mba_region@94800000 {
+			reg = <0x00 0x94800000 0x00 0x200000>;
+			no-map;			
+		}
+
+		cdsp_fw_region@94a00000 {
+			reg = <0x00 0x94a00000 0x00 0x600000>;
+			no-map;		
+		}	
+
+		splash_region@9d400000 {
+			reg = <0x00 0x9d400000 0x00 0x23ff000>;
+			label = "cont_splash_mem";
+			no-map;
 		};
 
 		dfps_data_mem@9f7ff000 {
 			reg = <0x00 0x9f7ff000 0x00 0x1000>;
 			label = "dfps_data_mem";
+		};
+
+		fih_nv@AC000000 {
+			reg = <0x00 0xac000000 0x00 0x800000>;
+			no-map;
+		};
+
+		fih_mem@AC800000 {
+			reg = <0x00 0xac800000 0x00 0x300000>;
+			no-map;
 		};
 
 		pstore_region@ACB00000 {
@@ -96,14 +135,19 @@
 			status = "okay";
 		};
 
-		fih_mem@AC800000 {
-			reg = <0x00 0xac800000 0x00 0x300000>;
-			no-map;
+		linux,cma {
+			size = <0x00 0x2c00000>;
+			reusable;
+			alloc-ranges = <0x00 0x00 0x00 0xffffffff>;
+			alignment = <0x00 0x400000>;
+			linux,cma-default;
 		};
 
-		fih_nv@AC000000 {
-			reg = <0x00 0xac000000 0x00 0x800000>;
-			no-map;
+		adsp_region {
+			size = <0x00 0x800000>;
+			reusable;
+			alloc-ranges = <0x00 0x00 0x00 0xffffffff>;
+			alignment = <0x00 0x400000>;
 		};
 
 		venus_fw_region {
@@ -111,8 +155,6 @@
 			reusable;
 			alloc-ranges = <0x00 0x80000000 0x00 0x20000000>;
 			alignment = <0x00 0x400000>;
-			phandle = <0x11f>;
-			linux,phandle = <0x11f>;
 		};
 
 		secure_region {
@@ -120,22 +162,6 @@
 			reusable;
 			alloc-ranges = <0x00 0x00 0x00 0xffffffff>;
 			alignment = <0x00 0x400000>;
-			phandle = <0x135>;
-			linux,phandle = <0x135>;
-		};
-
-		splash_region@9d400000 {
-			reg = <0x00 0x9d400000 0x00 0x23ff000>;
-			label = "cont_splash_mem";
-			no-map;
-		};
-
-		linux,cma {
-			size = <0x00 0x2000000>;
-			reusable;
-			alloc-ranges = <0x00 0x00 0x00 0xffffffff>;
-			alignment = <0x00 0x400000>;
-			linux,cma-default;
 		};
 
 		qseecom_region {
@@ -143,8 +169,15 @@
 			reusable;
 			alloc-ranges = <0x00 0x00 0x00 0xffffffff>;
 			alignment = <0x00 0x400000>;
-			phandle = <0x134>;
-			linux,phandle = <0x134>;
+		};
+
+		/* from downstream dmesg:
+		 * subsys-pil-tz soc:qcom,kgsl-hyp: a512_zap: loading from
+		 *     0x00000000fe600000 to 0x00000000fe602000 */
+		zap_shader_region: gpu@fe600000 {
+			compatible = "shared-dma-pool";
+			reg = <0x0 0xfe600000 0x0 0x2000>;
+			no-map;
 		};
 	};
 
@@ -239,11 +272,11 @@
 	
 	panel: panel@0 {
 		reg = <0>;
-		compatible = "asus,nt36672-txd";
+		compatible = "mdss,nt36672-tianma";
 
 		backlight = <&pm660l_wled>;
 
-		reset-gpios = <&tlmm 53 GPIO_ACTIVE_HIGH>;
+		reset-gpios = <&tlmm 53 GPIO_ACTIVE_LOW>;
 		disp-te-gpios = <&tlmm 59 GPIO_ACTIVE_HIGH>;
 
 		width-mm = <68>;
@@ -267,11 +300,6 @@
 &mdss_dsi0_phy {
 	vcca-supply = <&vreg_l1b_0p925>;
 	status = "okay";
-};
-
-&adsp_pil {
-	status = "okay";
-	firmware-name = "adsp.mdt";
 };
 
 &lpass_smmu {
@@ -318,7 +346,6 @@
 	status = "okay";
 	zap-shader {
 		memory-region = <&zap_shader_region>;
-		firmware-name = "qcom/a512_zap.mdt";
 	};
 };
 
@@ -706,8 +733,8 @@
 };
 
 &venus {
-	status = "disabled";
-	firmware-name = "qcom/venus-4.4/venus.mdt";
+	status = "okay";
+	firmware-name = "venus.mdt";
 };
 
 &wifi {
@@ -715,7 +742,6 @@
 	vdd-1.8-xo-supply = <&vreg_l9a_1p8>;
 	vdd-1.3-rfa-supply = <&vreg_l6a_1p3>;
 	vdd-3.3-ch0-supply = <&vreg_l19a_3p3>;
-	vdd-3.3-ch1-supply = <&vreg_l19a_3p3>;
 
 	status = "okay";
 };
