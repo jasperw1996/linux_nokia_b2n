@@ -72,7 +72,7 @@
 		buffer_mem: buffer_region@94a00000 {
 			reg = <0x00 0x94a00000 0x00 0x600000>;
 			no-map;		
-		}	
+		};	
 
 		splash_region@9d400000 {
 			reg = <0x00 0x9d400000 0x00 0x23ff000>;
@@ -119,6 +119,8 @@
 			reusable;
 			alloc-ranges = <0x00 0x00 0x00 0xffffffff>;
 			alignment = <0x00 0x400000>;
+			phandle = <0x10d>;
+			linux,phandle = <0x10d>;
 		};
 
 		venus_fw_region {
@@ -126,6 +128,8 @@
 			reusable;
 			alloc-ranges = <0x00 0x80000000 0x00 0x20000000>;
 			alignment = <0x00 0x400000>;
+			phandle = <0x11f>;
+			linux,phandle = <0x11f>;
 		};
 
 		secure_region {
@@ -133,6 +137,8 @@
 			reusable;
 			alloc-ranges = <0x00 0x00 0x00 0xffffffff>;
 			alignment = <0x00 0x400000>;
+			phandle = <0x135>;
+			linux,phandle = <0x135>;
 		};
 
 		qseecom_region {
@@ -140,6 +146,8 @@
 			reusable;
 			alloc-ranges = <0x00 0x00 0x00 0xffffffff>;
 			alignment = <0x00 0x400000>;
+			phandle = <0x134>;
+			linux,phandle = <0x134>;
 		};
 
 		/* from downstream dmesg:
