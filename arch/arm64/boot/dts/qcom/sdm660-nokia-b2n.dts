@@ -251,11 +251,9 @@
 	
 	panel: panel@0 {
 		reg = <0>;
-		compatible = "asus,nt36672-txd";
+		compatible = "mdss,dsi-nt36672";
 
-		backlight = <&pm660l_wled>;
-
-		reset-gpios = <&tlmm 53 GPIO_ACTIVE_HIGH>;
+		reset-gpios = <&tlmm 53 GPIO_ACTIVE_LOW>;
 		disp-te-gpios = <&tlmm 59 GPIO_ACTIVE_HIGH>;
 
 		width-mm = <68>;
@@ -331,8 +329,7 @@
 };
 
 &pm660l_wled {
-	status = "okay";
-	default-brightness = <512>;
+	status = "disabled";
 };
 
 &pm660_charger {
