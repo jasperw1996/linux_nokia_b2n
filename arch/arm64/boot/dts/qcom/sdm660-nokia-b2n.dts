@@ -260,8 +260,9 @@
 
 		width-mm = <68>;
 		height-mm = <136>;
-
+		
 		pinctrl-names = "default";
+
 		pinctrl-0 = <&panel_reset_gpio &panel_te_gpio>;
 		port {
 			panel_in: endpoint {
